@@ -2,10 +2,12 @@ import numpy
 import random
 
 # substitutionKey = [4, 1, 'e', 8, 'd', 6, 2, 'b', 'f', 'c', 9, 7, 3, 'a', 5, 0]
-substitutionKey = [7, 'd', 'e', 3, 0, 6, 9, 'a', 1, 2, 8, 5, 'b', 'c', 4, 'f']
+substitutionKey = ['7', 'd', 'e', '3', '0', '6', '9', 'a', '1', '2', '8', '5', 'b', 'c', '4', 'f']
 permutationKey = [1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15, 4, 8, 12, 16]
 permutationKey = [x-1 for x in permutationKey]
 rounds = 4
+
+inverseSBoxKey = ['{:1x}'.format(substitutionKey.index('{:1x}'.format(idx))) for idx in range(len(substitutionKey))]
 
 
 def pretty_bin(binary):
@@ -59,8 +61,9 @@ def spn_encrypt(data, key, sub_key, perm_key):
             # print("perm: " + pretty_bin(data))
         else:
             data = xor(data, keys[rndIdx])
+            # print(pretty_bin('{:016b}'.format(int(keys[rndIdx], 16))))
             # print("xor:  " + pretty_bin(data))
-    return pretty_bin(data)
+    return data
 
 
 def spn_encrypt_diff_anal(data, key, sub_key, perm_key):
@@ -70,19 +73,12 @@ def spn_encrypt_diff_anal(data, key, sub_key, perm_key):
         # print("ROUND " + str(rndIdx))
         data = xor(data, keys[rndIdx-1])
         # print("xor:  " + pretty_bin(data))
+        data = substitution_box(data, sub_key)
+        # print("sub:  " + pretty_bin(data))
         if rndIdx < rounds:
-            data = substitution_box(data, sub_key)
-            # print("sub:  " + pretty_bin(data))
             data = permutation(data, perm_key)
             # print("perm: " + pretty_bin(data))
     return data
-
-inputKey = "1110 0111 0110 0111 1001 0000 0011 1101"
-plainText = "0100 1110 1010 0001"
-
-# cipherText = spn_encrypt(plainText, inputKey, substitutionKey, [x-1 for x in permutationKey])
-
-# print(plainText + " -> " + cipherText)
 
 
 def find_s_box_characteristics(s_box_key):
@@ -114,12 +110,13 @@ def print_characteristics(characteristics):
 def differential_trail_calc(input_xor_bin, s_box_char, permutation_key):
     rnd_likely_xor_bin = input_xor_bin
     probability = 1.0
-    for rndIdx in range(1, rounds):
+    for rndIdx in range(rounds):
         rnd_input_hex = '{:0{width}x}'.format(int(rnd_likely_xor_bin, 2), width=int(len(rnd_likely_xor_bin) / 4))
         likely_hex = ''.join(['{:01x}'.format(s_box_char[int(val, 16)].index(max(s_box_char[int(val, 16)]))) for val in rnd_input_hex])
         probability *= numpy.prod([max(s_box_char[int(val, 16)])/len(s_box_char[int(val, 16)]) for val in rnd_input_hex])
         rnd_likely_xor_bin = '{0:0{width}b}'.format(int(likely_hex, 16), width=len(input_xor_bin))
-        rnd_likely_xor_bin = permutation(rnd_likely_xor_bin, permutation_key)
+        if rndIdx != rounds - 1:
+            rnd_likely_xor_bin = permutation(rnd_likely_xor_bin, permutation_key)
     return [probability, rnd_likely_xor_bin]
 
 
@@ -157,16 +154,58 @@ def find_right_pair(input_xor_bin, output_xor_bin, key, s_box_key, p_box_key):
         rand_output_bin_1 = spn_encrypt_diff_anal(rand_input_bin_1, key, s_box_key, p_box_key)
         rand_output_bin_2 = spn_encrypt_diff_anal(rand_input_bin_2, key, s_box_key, p_box_key)
 
+        # rand_output_bin_1 = substitution_box(rand_output_bin_1, inverseSBoxKey)
+        # rand_output_bin_2 = substitution_box(rand_output_bin_2, inverseSBoxKey)
+
         rand_output_xor_bin = xor_bin(rand_output_bin_1, rand_output_bin_2)
     print("Found right pair in " + str(ctr) + " attempts.")
     return [rand_input_bin_1, rand_input_bin_2, rand_output_bin_1, rand_output_bin_2]
 
 
+def find_last_key(input_xor_bin, output_xor_bin, key, s_box_key, p_box_key, last_key_rounds):
+    max_guesses = 0
+    best_guess = '0' * 16
+    guesses = {}
+
+    for _ in range(last_key_rounds):
+        rand_input_bin_1 = ''.join(['{:04b}'.format(random.randint(0, 16)) for _ in range(4)])
+        rand_input_bin_2 = xor_bin(rand_input_bin_1, input_xor_bin)
+
+        rand_output_bin_1 = spn_encrypt(rand_input_bin_1, key, s_box_key, p_box_key)
+        rand_output_bin_2 = spn_encrypt(rand_input_bin_2, key, s_box_key, p_box_key)
+
+        # rand_output_bin_1 = substitution_box(rand_output_bin_1, inverseSBoxKey)
+        # rand_output_bin_2 = substitution_box(rand_output_bin_2, inverseSBoxKey)
+
+        rand_output_xor_bin = xor_bin(rand_output_bin_1, rand_output_bin_2)
+        new_guess = xor_bin(output_xor_bin, rand_output_xor_bin)
+
+        item_count = guesses.get(new_guess, 0) + 1
+        if item_count > max_guesses:
+            max_guesses = item_count
+            best_guess = new_guess
+        guesses[new_guess] = item_count
+    print("Guess freq: " + str(max_guesses) + "/" + str(last_key_rounds) + " = " + str(max_guesses/last_key_rounds))
+    return best_guess
+
+
+inputKey = "1110 0111 0110 0111 1001 0000 0011 1101"
+plainText = "0100 1110 1010 0001"
+
+# cipherText = spn_encrypt(plainText, inputKey, substitutionKey, [x-1 for x in permutationKey])
+
+# print(plainText + " -> " + cipherText)
+
 print("Finding difference distribution table")
 sBoxCharacteristics = find_s_box_characteristics(substitutionKey)
 print_characteristics(sBoxCharacteristics)
 diff_trail = find_good_differential_trail(sBoxCharacteristics, permutationKey)
-print("Diff Trail: " + diff_trail[1] + "->" + diff_trail[2] + " - Chance: " + str(diff_trail[0]))
+frequency = int((1/diff_trail[0]))
+print("Diff Trail: " + pretty_bin(diff_trail[1]) + "->" + pretty_bin(diff_trail[2]) + " - Chance: " + str(diff_trail[0]) + " - Every " + str(frequency) + " attempts")
+
+lastKey = find_last_key(diff_trail[1], diff_trail[2], inputKey, substitutionKey, permutationKey, frequency*30)
+print("Best key ending: " + pretty_bin(lastKey))
+
 rightPair = find_right_pair(diff_trail[1], diff_trail[2], inputKey, substitutionKey, permutationKey)
-print("R Pair 1a:  " + rightPair[0] + "->" + rightPair[2])
-print("R Pair 1b:  " + rightPair[1] + "->" + rightPair[3])
+print("R Pair 1a:  " + pretty_bin(rightPair[0]) + "->" + pretty_bin(rightPair[2]))
+print("R Pair 1b:  " + pretty_bin(rightPair[1]) + "->" + pretty_bin(rightPair[3]))

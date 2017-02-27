@@ -16,7 +16,7 @@
     <SUITE FILE_PATH="coverage/cm30173-cryptography$permutation_cipher.coverage" NAME="permutation_cipher Coverage Results" MODIFIED="1486930522120" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/worksheet1" />
     <SUITE FILE_PATH="coverage/cm30173-cryptography$w1p1.coverage" NAME="w1p1 Coverage Results" MODIFIED="1486930497736" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/worksheet1" />
     <SUITE FILE_PATH="coverage/cm30173-cryptography$spn_implementation.coverage" NAME="spn_implementation Coverage Results" MODIFIED="1487532888452" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/worksheet2" />
-    <SUITE FILE_PATH="coverage/cm30173-cryptography$differential_anal.coverage" NAME="differential_anal Coverage Results" MODIFIED="1488163077164" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/worksheet3" />
+    <SUITE FILE_PATH="coverage/cm30173-cryptography$differential_anal.coverage" NAME="differential_anal Coverage Results" MODIFIED="1488168571933" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/worksheet3" />
     <SUITE FILE_PATH="coverage/cm30173-cryptography$substitution_cipher.coverage" NAME="substitution_cipher Coverage Results" MODIFIED="1486935239473" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/worksheet1" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -62,8 +62,8 @@
       <file leaf-file-name="differential_anal.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/worksheet3/differential_anal.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="347">
-              <caret line="151" column="48" lean-forward="true" selection-start-line="151" selection-start-column="48" selection-end-line="151" selection-end-column="48" />
+            <state relative-caret-position="-33">
+              <caret line="184" column="35" lean-forward="false" selection-start-line="184" selection-start-column="35" selection-end-line="184" selection-end-column="35" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -616,12 +616,19 @@
       <option name="project" value="LOCAL" />
       <updated>1488161449533</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Successfully finding right pair">
+      <created>1488163123510</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1488163123510</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-1" width="3840" height="2131" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -656,7 +663,8 @@
     <MESSAGE value="spn_implementation" />
     <MESSAGE value="Successfully found differential trail." />
     <MESSAGE value="Fixed warning" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed warning" />
+    <MESSAGE value="Successfully finding right pair" />
+    <option name="LAST_COMMIT_MESSAGE" value="Successfully finding right pair" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -865,8 +873,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/worksheet3/differential_anal.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="347">
-          <caret line="151" column="48" lean-forward="true" selection-start-line="151" selection-start-column="48" selection-end-line="151" selection-end-column="48" />
+        <state relative-caret-position="-33">
+          <caret line="184" column="35" lean-forward="false" selection-start-line="184" selection-start-column="35" selection-end-line="184" selection-end-column="35" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>

@@ -1,4 +1,5 @@
 import numpy
+import random
 
 # substitutionKey = [4, 1, 'e', 8, 'd', 6, 2, 'b', 'f', 'c', 9, 7, 3, 'a', 5, 0]
 substitutionKey = [7, 'd', 'e', 3, 0, 6, 9, 'a', 1, 2, 8, 5, 'b', 'c', 4, 'f']
@@ -16,8 +17,9 @@ def xor_bin(data1, data2):
     return '{0:0{1}b}'.format(output, len(data1))
 
 
-def xor(data, hex_key):
-    return xor_bin(data, '{0:0{1}b}'.format(int(hex_key, 16), len(data)))
+def xor(bin_data, hex_data):
+    output = int(bin_data, 2) ^ int(hex_data, 16)
+    return '{0:0{1}b}'.format(output, len(bin_data))
 
 
 def permutation(input_bytes, key):
@@ -134,12 +136,37 @@ def find_good_differential_trail(s_box_characteristics, permutation_key):
                 max_prob = most_likely[0]
                 best_input_xor_bin = bin_guess
                 best_output_xor_bin = most_likely[1]
-                print(bin_guess + "->" + most_likely[1] + ": " + str(most_likely[0]))
+                # print(bin_guess + "->" + most_likely[1] + ": " + str(most_likely[0]))
     return [max_prob, best_input_xor_bin, best_output_xor_bin]
 
-sBoxCharacteristics = find_s_box_characteristics(substitutionKey)
+
+def find_right_pair(input_xor_bin, output_xor_bin, key, s_box_key, p_box_key):
+    rand_input_bin_1 = '0'*16
+    rand_input_bin_2 = '0'*16
+    rand_output_bin_1 = '0'*16
+    rand_output_bin_2 = '0'*16
+    rand_output_xor_bin = '0'*16
+
+    ctr = 0
+
+    while rand_output_xor_bin != output_xor_bin:
+        ctr += 1
+        rand_input_bin_1 = ''.join(['{:04b}'.format(random.randint(0, 16)) for _ in range(4)])
+        rand_input_bin_2 = xor_bin(rand_input_bin_1, input_xor_bin)
+
+        rand_output_bin_1 = spn_encrypt_diff_anal(rand_input_bin_1, key, s_box_key, p_box_key)
+        rand_output_bin_2 = spn_encrypt_diff_anal(rand_input_bin_2, key, s_box_key, p_box_key)
+
+        rand_output_xor_bin = xor_bin(rand_output_bin_1, rand_output_bin_2)
+    print("Found right pair in " + str(ctr) + " attempts.")
+    return [rand_input_bin_1, rand_input_bin_2, rand_output_bin_1, rand_output_bin_2]
+
 
 print("Finding difference distribution table")
+sBoxCharacteristics = find_s_box_characteristics(substitutionKey)
 print_characteristics(sBoxCharacteristics)
-print("Finding differential trail")
-find_good_differential_trail(sBoxCharacteristics, permutationKey)
+diff_trail = find_good_differential_trail(sBoxCharacteristics, permutationKey)
+print("Diff Trail: " + diff_trail[1] + "->" + diff_trail[2] + " - Chance: " + str(diff_trail[0]))
+rightPair = find_right_pair(diff_trail[1], diff_trail[2], inputKey, substitutionKey, permutationKey)
+print("R Pair 1a:  " + rightPair[0] + "->" + rightPair[2])
+print("R Pair 1b:  " + rightPair[1] + "->" + rightPair[3])

@@ -83,7 +83,7 @@ plainText = "0100 1110 1010 0001"
 # print(plainText + " -> " + cipherText)
 
 
-def s_box_characteristics(s_box_key):
+def find_s_box_characteristics(s_box_key):
     bin_array = ['{:0{width}b}'.format(x, width=4) for x in range(16)]
     sboxed_array = [substitution_box(x, s_box_key) for x in bin_array]
     result = [[0 for _ in range(16)] for _ in range(16)]
@@ -137,7 +137,7 @@ def find_good_differential_trail(s_box_characteristics, permutation_key):
                 print(bin_guess + "->" + most_likely[1] + ": " + str(most_likely[0]))
     return [max_prob, best_input_xor_bin, best_output_xor_bin]
 
-sBoxCharacteristics = s_box_characteristics(substitutionKey)
+sBoxCharacteristics = find_s_box_characteristics(substitutionKey)
 
 print("Finding difference distribution table")
 print_characteristics(sBoxCharacteristics)
